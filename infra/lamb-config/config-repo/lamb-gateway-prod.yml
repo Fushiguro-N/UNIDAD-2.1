@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://lamb-keycloak:8080/realms/lamb
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: lms-cursos
+              uri: lb://lms-ms
+              predicates:
+                - Path=/api/v1/lms/cursos/**
+            - id: lms-contenidos
+              uri: lb://lms-ms
+              predicates:
+                - Path=/api/v1/lms/contenidos/**
+            - id: lms-matriculas
+              uri: lb://lms-ms
+              predicates:
+                - Path=/api/v1/lms/matriculas/**
+            - id: ingresos-pagos-pagos
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/ingresos-pagos/pagos/**
+            - id: ingresos-pagos-estudiantes
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/ingresos-pagos/estudiantes/**
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+  client:
+    service-url:
+      defaultZone: http://lamb-eureka:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: never

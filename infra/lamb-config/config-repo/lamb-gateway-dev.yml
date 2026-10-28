@@ -1,0 +1,55 @@
+server:
+  port: 18080
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:18180/realms/lamb
+  cloud:
+    loadbalancer:
+      cache:
+        ttl: 5s
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: lms-cursos
+              uri: lb://lms-ms
+              predicates:
+                - Path=/api/v1/lms/cursos/**
+            - id: lms-contenidos
+              uri: lb://lms-ms
+              predicates:
+                - Path=/api/v1/lms/contenidos/**
+            - id: lms-matriculas
+              uri: lb://lms-ms
+              predicates:
+                - Path=/api/v1/lms/matriculas/**
+            - id: ingresos-pagos-pagos
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/ingresos-pagos/pagos/**
+            - id: ingresos-pagos-estudiantes
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/ingresos-pagos/estudiantes/**
+
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    registry-fetch-interval-seconds: 5
+    service-url:
+      defaultZone: http://localhost:18761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
