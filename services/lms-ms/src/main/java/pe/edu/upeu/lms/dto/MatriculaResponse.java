@@ -14,7 +14,7 @@ public class MatriculaResponse {
     private Long id;
     private String idEstudiante;
     private String periodoAcademico;
-    private LocalDateTime fechaCreacion;
+    private LocalDateTime createdAt;
     private String estado;
     private BigDecimal total;
     private List<DetalleMatriculaResponse> detalles;

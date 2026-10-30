@@ -2,8 +2,8 @@ package pe.edu.upeu.lms.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +11,9 @@ import java.util.List;
 @Table(name = "matriculas")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class Matricula {
+public class Matricula extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +24,6 @@ public class Matricula {
 
     @Column(name = "periodo_academico", length = 20)
     private String periodoAcademico;
-
-    @Column(name = "fecha_creacion", nullable = false)
-    @Builder.Default
-    private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

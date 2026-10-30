@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "ingresos-pagos-ms")
 public interface EstadoCuentaClient {
 
-    @GetMapping("/api/v1/ingresos-pagos/estudiantes/{id}/estado-cuenta")
+    @GetMapping("/api/v1/ingresos-pagos/pagos-dominio/estudiantes/{id}/estado-cuenta")
     EstadoCuentaResponse obtenerEstadoCuenta(@PathVariable("id") String id);
 }

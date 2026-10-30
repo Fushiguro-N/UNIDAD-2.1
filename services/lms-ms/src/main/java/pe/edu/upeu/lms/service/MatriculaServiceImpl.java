@@ -149,7 +149,7 @@ public class MatriculaServiceImpl implements MatriculaService {
                 .id(matricula.getId())
                 .idEstudiante(matricula.getIdEstudiante())
                 .periodoAcademico(matricula.getPeriodoAcademico())
-                .fechaCreacion(matricula.getFechaCreacion())
+                .createdAt(matricula.getCreatedAt())
                 .estado(matricula.getEstado().name())
                 .total(matricula.getTotal())
                 .detalles(detalles)
