@@ -1,0 +1,28 @@
+<div class="shell">
+  <aside class="sidebar" [class.collapsed]="!navOpen()">
+    <div class="brand">
+      <span class="brand-mark">IP</span>
+      <span class="brand-name">Portal de Ingresos y Pagos</span>
+    </div>
+
+    <nav class="nav-group">
+      <a routerLink="/estado-cuenta" routerLinkActive="active" class="nav-link special">Estado de Cuenta</a>
+      @for (e of entities; track e.resource) {
+        <a [routerLink]="['/', e.resource]" routerLinkActive="active" class="nav-link">{{ e.label }}</a>
+      }
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" (click)="toggleNav()">☰</button>
+      <div class="spacer"></div>
+      <span class="username">{{ auth.username }}</span>
+      <button class="btn-logout" (click)="logout()">Salir</button>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

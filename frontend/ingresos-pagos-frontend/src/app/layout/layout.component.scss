@@ -1,0 +1,129 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease;
+  overflow: hidden;
+
+  &.collapsed {
+    width: 0;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.25rem 1.1rem;
+  white-space: nowrap;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0.6rem 1.5rem;
+  overflow-y: auto;
+  gap: 0.15rem;
+}
+
+.nav-link {
+  color: var(--sidebar-text-muted);
+  text-decoration: none;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--sidebar-hover);
+    color: var(--sidebar-text);
+  }
+
+  &.active {
+    background: var(--accent);
+    color: var(--accent-contrast);
+    font-weight: 600;
+  }
+
+  &.special {
+    font-weight: 700;
+    color: var(--sidebar-text);
+    border: 1px solid var(--sidebar-hover);
+    margin-bottom: 0.5rem;
+  }
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--text-strong);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.username {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.btn-logout {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+}
