@@ -1,0 +1,60 @@
+<div class="form-page">
+  <h1>Inscribirse en un periodo academico</h1>
+  <p class="hint">Tu identidad de estudiante se toma automaticamente de tu sesion.</p>
+
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  @if (success()) {
+    <div class="alert-success">Matricula creada correctamente (id: {{ success().id }}).</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="dynamic-form">
+    <div class="field">
+      <label for="periodoAcademico">Periodo Academico</label>
+      <input id="periodoAcademico" type="text" formControlName="periodoAcademico" placeholder="2026-I" />
+    </div>
+
+    <div class="field">
+      <label for="metodoPago">Metodo de Pago *</label>
+      <select id="metodoPago" formControlName="metodoPago">
+        <option value="" disabled>Selecciona un metodo</option>
+        <option value="TARJETA">Tarjeta</option>
+        <option value="TRANSFERENCIA">Transferencia</option>
+        <option value="EFECTIVO">Efectivo</option>
+        <option value="YAPE">Yape</option>
+        <option value="PLIN">Plin</option>
+      </select>
+    </div>
+
+    @if (pagoInfo()) {
+      <div class="pago-info">{{ pagoInfo() }}</div>
+    }
+
+    <div class="field">
+      <label>Contenidos a matricular *</label>
+      <div formArrayName="detalles" class="detalles-list">
+        @for (row of detallesArray.controls; track row; let i = $index) {
+          <div [formGroupName]="i" class="detalle-row">
+            <select formControlName="idContenido">
+              <option value="" disabled>Selecciona un contenido</option>
+              @for (c of contenidos(); track c.id) {
+                <option [value]="c.id">{{ c.nombre }} (S/ {{ c.precio }})</option>
+              }
+            </select>
+            <input type="number" min="1" formControlName="cantidad" />
+            <button type="button" class="btn-remove" (click)="removeDetalle(i)" [disabled]="detallesArray.length === 1">✕</button>
+          </div>
+        }
+      </div>
+      <button type="button" class="btn-add" (click)="addDetalle()">+ Agregar contenido</button>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Inscribiendose...' : 'Inscribirse' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,37 @@
+<div class="form-page">
+  <h1>{{ editing() ? 'Editar' : 'Nuevo' }} {{ config().label }}</h1>
+
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form()" (ngSubmit)="save()" class="dynamic-form">
+    @for (field of config().fields; track field.name) {
+      <div class="field">
+        <label [for]="field.name">{{ field.label }} @if (field.required) { * }</label>
+
+        @if (field.optionsResource) {
+          <select [id]="field.name" [formControlName]="field.name">
+            <option value="" disabled>Selecciona una opcion</option>
+            @for (opt of optionsByField()[field.name] ?? []; track opt.id) {
+              <option [value]="opt.id">{{ field.optionsLabel ? opt[field.optionsLabel] : opt.id }}</option>
+            }
+          </select>
+        } @else if (field.type === 'boolean') {
+          <input type="checkbox" [id]="field.name" [formControlName]="field.name" />
+        } @else if (field.type === 'textarea') {
+          <textarea [id]="field.name" [formControlName]="field.name" rows="3"></textarea>
+        } @else {
+          <input [id]="field.name" [type]="field.type" [formControlName]="field.name" />
+        }
+      </div>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" [routerLink]="['/', config().resource]">Cancelar</button>
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</div>

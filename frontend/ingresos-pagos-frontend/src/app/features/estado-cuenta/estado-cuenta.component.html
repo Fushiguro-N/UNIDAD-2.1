@@ -1,0 +1,32 @@
+<div class="form-page">
+  <h1>Estado de Cuenta del Estudiante</h1>
+  <p class="hint">Consulta si un estudiante tiene deudas pendientes de pago.</p>
+
+  <form [formGroup]="form" (ngSubmit)="buscar()" class="search-form">
+    <div class="field">
+      <label for="idEstudiante">ID del Estudiante *</label>
+      <input id="idEstudiante" type="text" formControlName="idEstudiante" placeholder="UUID del estudiante" />
+    </div>
+    <button type="submit" class="btn-primary" [disabled]="loading()">
+      {{ loading() ? 'Buscando...' : 'Buscar' }}
+    </button>
+  </form>
+
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  @if (result()) {
+    <div class="result-card" [class.debt]="result()!.tieneDeudaPendiente">
+      <p><strong>Estudiante:</strong> {{ result()!.idEstudiante }}</p>
+      <p>
+        <strong>Estado:</strong>
+        @if (result()!.tieneDeudaPendiente) {
+          <span class="badge badge-debt">Tiene deuda pendiente</span>
+        } @else {
+          <span class="badge badge-ok">Sin deudas pendientes</span>
+        }
+      </p>
+    </div>
+  }
+</div>

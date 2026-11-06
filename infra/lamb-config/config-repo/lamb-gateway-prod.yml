@@ -15,167 +15,219 @@ spring:
             - id: lms-cursos
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/cursos/**
+                - Path=/api/v1/cursos/**
             - id: lms-contenidos
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/contenidos/**
+                - Path=/api/v1/contenidos/**
             - id: lms-matriculas
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/matriculas/**
+                - Path=/api/v1/matriculas/**
             - id: lms-categorias-curso
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/categorias-curso/**
+                - Path=/api/v1/categorias-curso/**
             - id: lms-docentes
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/docentes/**
+                - Path=/api/v1/docentes/**
             - id: lms-modalidades-curso
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/modalidades-curso/**
+                - Path=/api/v1/modalidades-curso/**
             - id: lms-periodos-academicos
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/periodos-academicos/**
+                - Path=/api/v1/periodos-academicos/**
             - id: lms-estados-matricula
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/estados-matricula/**
+                - Path=/api/v1/estados-matricula/**
             - id: lms-evaluaciones
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/evaluaciones/**
+                - Path=/api/v1/evaluaciones/**
             - id: lms-preguntas
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/preguntas/**
+                - Path=/api/v1/preguntas/**
             - id: lms-calificaciones
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/calificaciones/**
+                - Path=/api/v1/calificaciones/**
             - id: lms-avances-contenido
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/avances-contenido/**
+                - Path=/api/v1/avances-contenido/**
             - id: lms-rubricas-evaluacion
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/rubricas-evaluacion/**
+                - Path=/api/v1/rubricas-evaluacion/**
             - id: lms-preguntas-banco
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/preguntas-banco/**
+                - Path=/api/v1/preguntas-banco/**
             - id: lms-mallas-curriculares
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/mallas-curriculares/**
+                - Path=/api/v1/mallas-curriculares/**
             - id: lms-insignias
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/insignias/**
+                - Path=/api/v1/insignias/**
             - id: lms-plantillas-certificado
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/plantillas-certificado/**
+                - Path=/api/v1/plantillas-certificado/**
             - id: lms-secciones-curso
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/secciones-curso/**
+                - Path=/api/v1/secciones-curso/**
             - id: lms-sesiones-clase
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/sesiones-clase/**
+                - Path=/api/v1/sesiones-clase/**
             - id: lms-asistencias
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/asistencias/**
+                - Path=/api/v1/asistencias/**
             - id: lms-horarios-clase
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/horarios-clase/**
+                - Path=/api/v1/horarios-clase/**
             - id: lms-tareas
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/tareas/**
+                - Path=/api/v1/tareas/**
             - id: lms-entregas-tarea
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/entregas-tarea/**
+                - Path=/api/v1/entregas-tarea/**
             - id: lms-recursos-complementarios
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/recursos-complementarios/**
+                - Path=/api/v1/recursos-complementarios/**
             - id: lms-anuncios-curso
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/anuncios-curso/**
+                - Path=/api/v1/anuncios-curso/**
             - id: lms-foros-hilo
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/foros-hilo/**
+                - Path=/api/v1/foros-hilo/**
             - id: lms-respuestas-foro
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/respuestas-foro/**
+                - Path=/api/v1/respuestas-foro/**
             - id: lms-prerequisitos-curso
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/prerequisitos-curso/**
+                - Path=/api/v1/prerequisitos-curso/**
             - id: lms-convalidaciones-curso
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/convalidaciones-curso/**
+                - Path=/api/v1/convalidaciones-curso/**
             - id: lms-encuestas-satisfaccion
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/encuestas-satisfaccion/**
+                - Path=/api/v1/encuestas-satisfaccion/**
             - id: lms-listas-espera
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/listas-espera/**
+                - Path=/api/v1/listas-espera/**
             - id: lms-insignias-estudiante
               uri: lb://lms-ms
               predicates:
-                - Path=/api/v1/lms/insignias-estudiante/**
-            - id: ingresos-pagos-pagos-dominio
+                - Path=/api/v1/insignias-estudiante/**
+            - id: ingresos-pagos-entidades-financieras
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/pagos-dominio/**
-            - id: ingresos-pagos-cargos
+                - Path=/api/v1/entidades-financieras/**
+            - id: ingresos-pagos-tipos-cambio
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/cargos/**
-            - id: ingresos-pagos-cuentas-por-cobrar
+                - Path=/api/v1/tipos-cambio/**
+            - id: ingresos-pagos-cajas
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/cuentas-por-cobrar/**
-            - id: ingresos-pagos-caja
+                - Path=/api/v1/cajas/**
+            - id: ingresos-pagos-sesiones-caja
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/caja/**
-            - id: ingresos-pagos-bancos
+                - Path=/api/v1/sesiones-caja/**
+            - id: ingresos-pagos-arqueos-caja
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/bancos/**
-            - id: ingresos-pagos-comprobantes
+                - Path=/api/v1/arqueos-caja/**
+            - id: ingresos-pagos-conceptos-pago
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/comprobantes/**
-            - id: ingresos-pagos-devoluciones
+                - Path=/api/v1/conceptos-pago/**
+            - id: ingresos-pagos-tarifarios-programa
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/devoluciones/**
-            - id: ingresos-pagos-pasarelas
+                - Path=/api/v1/tarifarios-programa/**
+            - id: ingresos-pagos-recargos-mora
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/pasarelas/**
-            - id: ingresos-pagos-transversales
+                - Path=/api/v1/recargos-mora/**
+            - id: ingresos-pagos-bitacoras-auditoria-pago
               uri: lb://ingresos-pagos-ms
               predicates:
-                - Path=/api/v1/ingresos-pagos/transversales/**
+                - Path=/api/v1/bitacoras-auditoria-pago/**
+            - id: ingresos-pagos-plantillas-notificacion
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/plantillas-notificacion/**
+            - id: ingresos-pagos-tipos-comprobante
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/tipos-comprobante/**
+            - id: ingresos-pagos-series-comprobante
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/series-comprobante/**
+            - id: ingresos-pagos-becas
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/becas/**
+            - id: ingresos-pagos-becas-asignadas
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/becas-asignadas/**
+            - id: ingresos-pagos-convenios-institucionales
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/convenios-institucionales/**
+            - id: ingresos-pagos-financiamientos-educativos
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/financiamientos-educativos/**
+            - id: ingresos-pagos-pagadores-terceros
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/pagadores-terceros/**
+            - id: ingresos-pagos-notas-credito-debito
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/notas-credito-debito/**
+            - id: ingresos-pagos-logs-transaccion-pasarela
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/logs-transaccion-pasarela/**
+            - id: ingresos-pagos-metodos-pago
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/metodos-pago/**
+            - id: ingresos-pagos-pagos
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/pagos/**
+            - id: ingresos-pagos-estudiantes
+              uri: lb://ingresos-pagos-ms
+              predicates:
+                - Path=/api/v1/estudiantes/**
 
 eureka:
   instance:

@@ -1,0 +1,48 @@
+<div class="list-page">
+  <div class="list-header">
+    <h1>{{ config().label }}</h1>
+    @if (!config().readOnly) {
+      <button class="btn-primary" (click)="create()">+ Nuevo</button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (!rows().length) {
+    <p class="empty">Sin registros.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            @for (col of columns(); track col) {
+              <th>{{ col }}</th>
+            }
+            <th class="actions-col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track idOf(row)) {
+            <tr>
+              @for (col of columns(); track col) {
+                <td>{{ cell(row, col) }}</td>
+              }
+              <td class="actions-col">
+                @if (!config().readOnly) {
+                  <button class="btn-link" (click)="edit(row)">Editar</button>
+                }
+                @if (!config().noDelete) {
+                  <button class="btn-link danger" (click)="remove(row)">Eliminar</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
