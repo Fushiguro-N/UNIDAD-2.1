@@ -1,5 +1,7 @@
 <div class="form-page">
-  <h1>{{ editing() ? 'Editar' : 'Nuevo' }} {{ config().label }}</h1>
+  @if (!resourceOverride) {
+    <h1>{{ editing() ? 'Editar' : 'Nuevo' }} {{ config().label }}</h1>
+  }
 
   @if (error()) {
     <div class="alert-error">{{ error() }}</div>
@@ -14,23 +16,80 @@
           <select [id]="field.name" [formControlName]="field.name">
             <option value="" disabled>Selecciona una opcion</option>
             @for (opt of optionsByField()[field.name] ?? []; track opt.id) {
-              <option [value]="opt.id">{{ field.optionsLabel ? opt[field.optionsLabel] : opt.id }}</option>
+              <option [value]="opt.id">{{ optionLabel(opt, field) }}</option>
             }
           </select>
+        } @else if (field.staticOptions) {
+          <select [id]="field.name" [formControlName]="field.name">
+            <option value="" disabled>Selecciona una opcion</option>
+            @for (opt of field.staticOptions; track opt) {
+              <option [value]="opt">{{ opt }}</option>
+            }
+          </select>
+        } @else if (field.type === 'time') {
+          <div class="time-input">
+            <select [id]="field.name" [value]="timePart(field.name, 0)" (change)="setTimePart(field.name, 0, $event)">
+              @for (h of hours12; track h) {
+                <option [value]="h">{{ h }}</option>
+              }
+            </select>
+            <span>:</span>
+            <select [value]="timePart(field.name, 1)" (change)="setTimePart(field.name, 1, $event)">
+              @for (m of minutes; track m) {
+                <option [value]="m">{{ m }}</option>
+              }
+            </select>
+            <select [value]="timePart(field.name, 2)" (change)="setTimePart(field.name, 2, $event)">
+              @for (ap of ampmOptions; track ap) {
+                <option [value]="ap">{{ ap }}</option>
+              }
+            </select>
+          </div>
+        } @else if (field.type === 'file') {
+          <input type="file" (change)="onFileSelected(field.name, $event)" />
+          @if (uploadingByField()[field.name]) {
+            <span>Subiendo...</span>
+          }
+          @if (form().get(field.name)?.value) {
+            <a [href]="resolveUrl(form().get(field.name)?.value)" target="_blank">Ver archivo actual</a>
+          }
         } @else if (field.type === 'boolean') {
           <input type="checkbox" [id]="field.name" [formControlName]="field.name" />
         } @else if (field.type === 'textarea') {
           <textarea [id]="field.name" [formControlName]="field.name" rows="3"></textarea>
+        } @else if (suggestionsByField()[field.name]) {
+          <input
+            [id]="field.name"
+            [type]="field.type"
+            [formControlName]="field.name"
+            [attr.list]="field.name + '-list'"
+          />
+          <datalist [id]="field.name + '-list'">
+            @for (val of suggestionsByField()[field.name]; track val) {
+              <option [value]="val"></option>
+            }
+          </datalist>
         } @else {
           <input [id]="field.name" [type]="field.type" [formControlName]="field.name" />
+        }
+        @if (fieldError(field.name)) {
+          <p class="field-error">{{ fieldError(field.name) }}</p>
         }
       </div>
     }
 
     <div class="form-actions">
-      <button type="button" class="btn-secondary" [routerLink]="['/', config().resource]">Cancelar</button>
+      @if (resourceOverride) {
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
+      } @else {
+        <button type="button" class="btn-secondary" [routerLink]="['/', config().resource]">Cancelar</button>
+      }
       <button type="submit" class="btn-primary" [disabled]="saving()">
-        {{ saving() ? 'Guardando...' : 'Guardar' }}
+        @if (saving()) {
+          <span class="spinner"></span>
+        } @else {
+          Guardar
+        }
       </button>
     </div>
   </form>

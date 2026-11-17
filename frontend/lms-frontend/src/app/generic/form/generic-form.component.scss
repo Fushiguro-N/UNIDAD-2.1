@@ -9,14 +9,6 @@
   }
 }
 
-.alert-error {
-  background: #fde2e2;
-  color: #9b1c1c;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
 .dynamic-form {
   background: var(--surface);
   border-radius: 12px;
@@ -38,18 +30,53 @@
     color: var(--text-muted);
   }
 
-  input, textarea {
+  input, textarea, select {
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 0.5rem 0.7rem;
+    padding: 0.6rem 0.8rem;
     font-size: 0.92rem;
     font-family: inherit;
+    color: var(--text-strong);
+    background: var(--surface);
+  }
+
+  select {
+    height: 2.6rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b6480'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1rem;
+    padding-right: 2.2rem;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   }
 
   input[type='checkbox'] {
     width: 18px;
     height: 18px;
     align-self: flex-start;
+  }
+
+  .time-input {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    select {
+      flex: 1;
+    }
   }
 }
 
@@ -60,22 +87,3 @@
   margin-top: 0.5rem;
 }
 
-.btn-primary {
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border: none;
-  padding: 0.55rem 1.1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-secondary {
-  background: var(--surface-alt);
-  color: var(--text-strong);
-  border: 1px solid var(--border);
-  padding: 0.55rem 1.1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}

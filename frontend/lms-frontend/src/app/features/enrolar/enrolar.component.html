@@ -33,22 +33,21 @@
     }
 
     <div class="field">
-      <label>Contenidos a matricular *</label>
+      <label>Secciones a matricular *</label>
       <div formArrayName="detalles" class="detalles-list">
         @for (row of detallesArray.controls; track row; let i = $index) {
           <div [formGroupName]="i" class="detalle-row">
-            <select formControlName="idContenido">
-              <option value="" disabled>Selecciona un contenido</option>
-              @for (c of contenidos(); track c.id) {
-                <option [value]="c.id">{{ c.nombre }} (S/ {{ c.precio }})</option>
+            <select formControlName="idSeccionCurso">
+              <option value="" disabled>Selecciona una seccion</option>
+              @for (s of secciones(); track s.id) {
+                <option [value]="s.id">{{ s.curso?.nombre }} - Seccion {{ s.nombreSeccion }}</option>
               }
             </select>
-            <input type="number" min="1" formControlName="cantidad" />
             <button type="button" class="btn-remove" (click)="removeDetalle(i)" [disabled]="detallesArray.length === 1">✕</button>
           </div>
         }
       </div>
-      <button type="button" class="btn-add" (click)="addDetalle()">+ Agregar contenido</button>
+      <button type="button" class="btn-add" (click)="addDetalle()">+ Agregar seccion</button>
     </div>
 
     <div class="form-actions">

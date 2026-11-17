@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../../core/api.service';
+import { ToastService } from '../../core/toast.service';
 
 const PAGO_INFO: Record<string, string> = {
   TARJETA: 'Pago con tarjeta: se validará el cargo antes de confirmar la matrícula.',
@@ -21,6 +22,7 @@ const PAGO_INFO: Record<string, string> = {
 export class EnrolarComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastService);
 
   readonly form = this.fb.group({
     periodoAcademico: [''],
@@ -28,7 +30,7 @@ export class EnrolarComponent implements OnInit {
     detalles: this.fb.array([] as any[]),
   });
 
-  readonly contenidos = signal<any[]>([]);
+  readonly secciones = signal<any[]>([]);
   readonly pagoInfo = signal('');
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -45,9 +47,9 @@ export class EnrolarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.api.list('contenidos').subscribe({
-      next: (data) => this.contenidos.set(data ?? []),
-      error: () => this.contenidos.set([]),
+    this.api.list('secciones-curso').subscribe({
+      next: (data) => this.secciones.set((data ?? []).filter((s: any) => s.activo)),
+      error: () => this.secciones.set([]),
     });
     this.addDetalle();
   }
@@ -55,8 +57,7 @@ export class EnrolarComponent implements OnInit {
   addDetalle(): void {
     this.detallesArray.push(
       this.fb.group({
-        idContenido: ['', Validators.required],
-        cantidad: [1, [Validators.required, Validators.min(1)]],
+        idSeccionCurso: ['', Validators.required],
       }),
     );
   }
@@ -78,20 +79,22 @@ export class EnrolarComponent implements OnInit {
       periodoAcademico: raw.periodoAcademico,
       metodoPago: raw.metodoPago,
       detalles: (raw.detalles ?? []).map((d: any) => ({
-        idContenido: Number(d.idContenido),
-        cantidad: Number(d.cantidad),
+        idSeccionCurso: Number(d.idSeccionCurso),
       })),
     };
     this.api.post('matriculas/enrolar', payload).subscribe({
       next: (res) => {
         this.success.set(res);
         this.saving.set(false);
+        this.toast.success('Matrícula registrada correctamente');
         this.form.reset();
         this.detallesArray.clear();
         this.addDetalle();
       },
       error: (err) => {
-        this.error.set(err?.error?.message || err?.message || 'Error al enrolar');
+        const message = err?.error?.message || err?.message || 'Error al enrolar';
+        this.error.set(message);
+        this.toast.error(message);
         this.saving.set(false);
       },
     });

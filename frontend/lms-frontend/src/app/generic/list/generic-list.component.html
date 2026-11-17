@@ -1,26 +1,35 @@
 <div class="list-page">
-  <div class="list-header">
-    <h1>{{ config().label }}</h1>
-    @if (!config().readOnly) {
-      <button class="btn-primary" (click)="create()">+ Nuevo</button>
-    }
-  </div>
+  @if (!resourceOverride) {
+    <div class="list-header">
+      <h1>{{ config().label }}</h1>
+      @if (!config().readOnly && !config().noCreate) {
+        <button class="btn-primary" (click)="create()">+ Nuevo</button>
+      }
+    </div>
+  }
 
   @if (error()) {
     <div class="alert-error">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p>Cargando...</p>
+    <div class="skeleton-list">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
   } @else if (!rows().length) {
-    <p class="empty">Sin registros.</p>
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <p class="empty">No hay registros para mostrar.</p>
+    </div>
   } @else {
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             @for (col of columns(); track col) {
-              <th>{{ col }}</th>
+              <th>{{ columnLabel(col) }}</th>
             }
             <th class="actions-col">Acciones</th>
           </tr>
@@ -35,7 +44,7 @@
                 @if (!config().readOnly) {
                   <button class="btn-link" (click)="edit(row)">Editar</button>
                 }
-                @if (!config().noDelete) {
+                @if (!config().noDelete && !config().readOnly) {
                   <button class="btn-link danger" (click)="remove(row)">Eliminar</button>
                 }
               </td>
