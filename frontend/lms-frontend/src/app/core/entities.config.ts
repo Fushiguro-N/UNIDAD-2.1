@@ -1,5 +1,5 @@
 // AUTO-GENERATED from backend Request DTOs. Edit entities.config.ts manually after generation if needed.
-export type FieldType = 'text' | 'textarea' | 'number' | 'boolean' | 'date' | 'datetime-local';
+export type FieldType = 'text' | 'textarea' | 'number' | 'boolean' | 'date' | 'datetime-local' | 'time' | 'file';
 
 export interface EntityField {
   name: string;
@@ -8,6 +8,16 @@ export interface EntityField {
   required: boolean;
   optionsResource?: string;
   optionsLabel?: string;
+  staticOptions?: string[];
+}
+
+export type RoleKey = 'ADMIN' | 'DOCENTE' | 'ESTUDIANTE';
+
+export interface RoleOverride {
+  hidden?: boolean;
+  readOnly?: boolean;
+  noDelete?: boolean;
+  noCreate?: boolean;
 }
 
 export interface EntityConfig {
@@ -17,6 +27,22 @@ export interface EntityConfig {
   fields: EntityField[];
   readOnly?: boolean;
   noDelete?: boolean;
+  noCreate?: boolean;
+  hidden?: boolean;
+  roleOverrides?: Partial<Record<'DOCENTE' | 'ESTUDIANTE', RoleOverride>>;
+}
+
+export function currentRole(auth: { hasRole(role: string): boolean }): RoleKey {
+  if (auth.hasRole('DOCENTE')) return 'DOCENTE';
+  if (auth.hasRole('ESTUDIANTE')) return 'ESTUDIANTE';
+  return 'ADMIN';
+}
+
+export function effectiveConfig(base: EntityConfig, role: RoleKey): EntityConfig {
+  const override = role === 'ADMIN' ? undefined : base.roleOverrides?.[role];
+  if (override) return { ...base, ...override };
+  if (role === 'ESTUDIANTE') return { ...base, readOnly: true };
+  return base;
 }
 
 export const ENTITIES: EntityConfig[] = [
@@ -51,12 +77,16 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "asistencias",
     "entity": "Asistencia",
     "label": "Asistencia",
+    "readOnly": true,
+    "roleOverrides": { "DOCENTE": { "readOnly": false } },
     "fields": [
       {
         "name": "sesionClaseId",
-        "label": "Sesion Clase Id",
+        "label": "Sesion Clase",
         "type": "number",
-        "required": true
+        "required": true,
+        "optionsResource": "sesiones-clase",
+        "optionsLabel": "fecha"
       },
       {
         "name": "idEstudiante",
@@ -76,12 +106,15 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "avances-contenido",
     "entity": "AvanceContenido",
     "label": "Avance Contenido",
+    "readOnly": true,
     "fields": [
       {
-        "name": "contenidoId",
-        "label": "Contenido Id",
+        "name": "idRecurso",
+        "label": "Recurso",
         "type": "number",
-        "required": true
+        "required": true,
+        "optionsResource": "recursos-complementarios",
+        "optionsLabel": "nombre"
       },
       {
         "name": "idEstudiante",
@@ -95,12 +128,17 @@ export const ENTITIES: EntityConfig[] = [
         "type": "boolean",
         "required": true
       }
-    ]
+    ],
+    "roleOverrides": {
+      "DOCENTE": { "hidden": true }
+    }
   },
   {
     "resource": "calificaciones",
     "entity": "Calificacion",
     "label": "Calificacion",
+    "readOnly": true,
+    "roleOverrides": { "DOCENTE": { "readOnly": false } },
     "fields": [
       {
         "name": "evaluacionId",
@@ -126,6 +164,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "categorias-curso",
     "entity": "CategoriaCurso",
     "label": "Categoria Curso",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "nombre",
@@ -143,49 +182,6 @@ export const ENTITIES: EntityConfig[] = [
         "name": "activo",
         "label": "Activo",
         "type": "boolean",
-        "required": true
-      }
-    ]
-  },
-  {
-    "resource": "contenidos",
-    "entity": "Contenido",
-    "label": "Contenido",
-    "fields": [
-      {
-        "name": "nombre",
-        "label": "Nombre",
-        "type": "text",
-        "required": true
-      },
-      {
-        "name": "descripcion",
-        "label": "Descripcion",
-        "type": "textarea",
-        "required": false
-      },
-      {
-        "name": "precio",
-        "label": "Precio",
-        "type": "number",
-        "required": true
-      },
-      {
-        "name": "activo",
-        "label": "Activo",
-        "type": "boolean",
-        "required": true
-      },
-      {
-        "name": "stock",
-        "label": "Stock",
-        "type": "number",
-        "required": true
-      },
-      {
-        "name": "cursoId",
-        "label": "Curso Id",
-        "type": "number",
         "required": true
       }
     ]
@@ -194,6 +190,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "convalidaciones-curso",
     "entity": "ConvalidacionCurso",
     "label": "Convalidacion Curso",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "cursoId",
@@ -233,6 +230,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "cursos",
     "entity": "Curso",
     "label": "Curso",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "nombre",
@@ -252,6 +250,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "docentes",
     "entity": "Docente",
     "label": "Docente",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "nombres",
@@ -289,6 +288,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "encuestas-satisfaccion",
     "entity": "EncuestaSatisfaccion",
     "label": "Encuesta Satisfaccion",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "cursoId",
@@ -322,6 +322,11 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "entregas-tarea",
     "entity": "EntregaTarea",
     "label": "Entrega Tarea",
+    "readOnly": true,
+    "roleOverrides": {
+      "DOCENTE": { "readOnly": false, "noCreate": true, "noDelete": true },
+      "ESTUDIANTE": { "readOnly": false, "noDelete": true }
+    },
     "fields": [
       {
         "name": "tareaId",
@@ -337,8 +342,8 @@ export const ENTITIES: EntityConfig[] = [
       },
       {
         "name": "urlArchivo",
-        "label": "Url Archivo",
-        "type": "textarea",
+        "label": "Archivo",
+        "type": "file",
         "required": false
       },
       {
@@ -472,13 +477,13 @@ export const ENTITIES: EntityConfig[] = [
       {
         "name": "horaInicio",
         "label": "Hora Inicio",
-        "type": "text",
+        "type": "time",
         "required": true
       },
       {
         "name": "horaFin",
         "label": "Hora Fin",
-        "type": "text",
+        "type": "time",
         "required": true
       }
     ]
@@ -487,6 +492,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "insignias",
     "entity": "Insignia",
     "label": "Insignia",
+    "roleOverrides": { "DOCENTE": { "hidden": true }, "ESTUDIANTE": { "hidden": true } },
     "fields": [
       {
         "name": "nombre",
@@ -518,6 +524,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "insignias-estudiante",
     "entity": "InsigniaEstudiante",
     "label": "Insignia Estudiante",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "insigniaId",
@@ -562,6 +569,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "mallas-curriculares",
     "entity": "MallaCurricular",
     "label": "Malla Curricular",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "programa",
@@ -620,6 +628,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "modalidades-curso",
     "entity": "ModalidadCurso",
     "label": "Modalidad Curso",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "nombre",
@@ -645,6 +654,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "periodos-academicos",
     "entity": "PeriodoAcademico",
     "label": "Periodo Academico",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "nombre",
@@ -676,6 +686,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "plantillas-certificado",
     "entity": "PlantillaCertificado",
     "label": "Plantilla Certificado",
+    "roleOverrides": { "DOCENTE": { "hidden": true }, "ESTUDIANTE": { "hidden": true } },
     "fields": [
       {
         "name": "nombre",
@@ -693,37 +704,6 @@ export const ENTITIES: EntityConfig[] = [
         "name": "activo",
         "label": "Activo",
         "type": "boolean",
-        "required": true
-      }
-    ]
-  },
-  {
-    "resource": "preguntas",
-    "entity": "Pregunta",
-    "label": "Pregunta",
-    "fields": [
-      {
-        "name": "evaluacionId",
-        "label": "Evaluacion Id",
-        "type": "number",
-        "required": true
-      },
-      {
-        "name": "enunciado",
-        "label": "Enunciado",
-        "type": "textarea",
-        "required": true
-      },
-      {
-        "name": "tipo",
-        "label": "Tipo",
-        "type": "text",
-        "required": true
-      },
-      {
-        "name": "puntaje",
-        "label": "Puntaje",
-        "type": "number",
         "required": true
       }
     ]
@@ -769,6 +749,7 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "prerequisitos-curso",
     "entity": "PrerequisitoCurso",
     "label": "Prerequisito Curso",
+    "roleOverrides": { "DOCENTE": { "hidden": true } },
     "fields": [
       {
         "name": "cursoId",
@@ -780,9 +761,11 @@ export const ENTITIES: EntityConfig[] = [
       },
       {
         "name": "cursoPrerequisitoId",
-        "label": "Curso Prerequisito Id",
+        "label": "Curso Prerequisito",
         "type": "number",
-        "required": true
+        "required": true,
+        "optionsResource": "cursos",
+        "optionsLabel": "nombre"
       }
     ]
   },
@@ -809,7 +792,8 @@ export const ENTITIES: EntityConfig[] = [
         "name": "tipo",
         "label": "Tipo",
         "type": "text",
-        "required": true
+        "required": true,
+        "staticOptions": ["PDF", "VIDEO", "LINK"]
       },
       {
         "name": "url",
@@ -829,6 +813,10 @@ export const ENTITIES: EntityConfig[] = [
     "resource": "respuestas-foro",
     "entity": "RespuestaForo",
     "label": "Respuesta Foro",
+    "readOnly": true,
+    "roleOverrides": {
+      "ESTUDIANTE": { "readOnly": false, "noDelete": true }
+    },
     "fields": [
       {
         "name": "foroHiloId",
@@ -896,15 +884,19 @@ export const ENTITIES: EntityConfig[] = [
       },
       {
         "name": "docenteId",
-        "label": "Docente Id",
+        "label": "Docente",
         "type": "number",
-        "required": true
+        "required": true,
+        "optionsResource": "docentes",
+        "optionsLabel": "nombres"
       },
       {
         "name": "periodoAcademicoId",
-        "label": "Periodo Academico Id",
+        "label": "Periodo Academico",
         "type": "number",
-        "required": true
+        "required": true,
+        "optionsResource": "periodos-academicos",
+        "optionsLabel": "nombre"
       },
       {
         "name": "nombreSeccion",
@@ -924,7 +916,10 @@ export const ENTITIES: EntityConfig[] = [
         "type": "boolean",
         "required": true
       }
-    ]
+    ],
+    "roleOverrides": {
+      "DOCENTE": { "readOnly": true }
+    }
   },
   {
     "resource": "sesiones-clase",
@@ -933,9 +928,11 @@ export const ENTITIES: EntityConfig[] = [
     "fields": [
       {
         "name": "seccionCursoId",
-        "label": "Seccion Curso Id",
+        "label": "Seccion Curso",
         "type": "number",
-        "required": true
+        "required": true,
+        "optionsResource": "secciones-curso",
+        "optionsLabel": "curso.nombre,nombreSeccion"
       },
       {
         "name": "fecha",
@@ -946,13 +943,13 @@ export const ENTITIES: EntityConfig[] = [
       {
         "name": "horaInicio",
         "label": "Hora Inicio",
-        "type": "text",
+        "type": "time",
         "required": true
       },
       {
         "name": "horaFin",
         "label": "Hora Fin",
-        "type": "text",
+        "type": "time",
         "required": true
       },
       {

@@ -1,0 +1,42 @@
+<div class="module-page">
+  <div class="module-header">
+    <h1>{{ moduleLabel() }}</h1>
+    @if (!activeReadOnly() && !activeNoCreate()) {
+      <button class="btn-primary" (click)="openCreate()">+ Nuevo Registro</button>
+    }
+  </div>
+
+  <nav class="tab-bar">
+    @for (tab of tabs(); track tab.resource) {
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="tab.resource === activeResource()"
+        (click)="selectTab(tab.resource)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </nav>
+
+  <div class="tab-content">
+    @if (activeResource()) {
+      <app-generic-list
+        [resourceOverride]="activeResource()"
+        (editRequested)="openEdit($event)"
+        (createRequested)="openCreate()"
+      />
+    }
+  </div>
+
+  @if (showForm()) {
+    <app-modal [title]="(editId() ? 'Editar ' : 'Nuevo ') + activeLabel()" (closed)="closeForm()">
+      <app-generic-form
+        [resourceOverride]="activeResource()"
+        [idOverride]="editId()"
+        (saved)="onSaved()"
+        (cancelled)="closeForm()"
+      />
+    </app-modal>
+  }
+</div>

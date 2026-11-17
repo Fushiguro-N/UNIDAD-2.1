@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/auth.service';
-import { ENTITIES } from '../core/entities.config';
+import { currentRole } from '../core/entities.config';
+import { MODULES } from '../core/modules.config';
 
 @Component({
   selector: 'app-layout',
@@ -13,7 +14,7 @@ import { ENTITIES } from '../core/entities.config';
 })
 export class LayoutComponent {
   readonly auth = inject(AuthService);
-  readonly entities = ENTITIES;
+  readonly modules = MODULES.filter((m) => !m.roles || m.roles.includes(currentRole(this.auth)));
   readonly navOpen = signal(true);
 
   toggleNav(): void {

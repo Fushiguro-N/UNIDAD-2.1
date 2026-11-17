@@ -1,0 +1,16 @@
+<div class="registrar-page">
+  <h1>Registrar</h1>
+  <p class="hint">Elige qué deseas registrar y luego completa el formulario.</p>
+
+  <div class="selector">
+    <label for="entidad">¿Qué deseas registrar?</label>
+    <select id="entidad" [ngModel]="resourceSeleccionado()" (ngModelChange)="resourceSeleccionado.set($event)">
+      <option value="" disabled>Selecciona una opción</option>
+      @for (e of entidades; track e.resource) {
+        <option [value]="e.resource">{{ e.label }}</option>
+      }
+    </select>
+
+    <button class="btn-primary" [disabled]="!resourceSeleccionado()" (click)="continuar()">Continuar</button>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<div class="dashboard">
+  <div class="dashboard-navbar">
+    <h1>CENTRO DE APRENDIZAJE VIRTUAL</h1>
+    <div class="quick-access">
+      <button class="qa-btn">📋 Mis cursos</button>
+      <button class="qa-btn">📅 Horario</button>
+      <button class="qa-btn">🔔 Avisos</button>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <section class="main-column">
+      <h2>Mis cursos matriculados</h2>
+
+      @if (loading()) {
+        <div class="skeleton-list">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="skeleton-row"></div>
+          }
+        </div>
+      } @else if (!cursos().length) {
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p class="empty">No tienes cursos matriculados por el momento.</p>
+        </div>
+      } @else {
+        <div class="course-grid">
+          @for (c of cursos(); track c.id) {
+            <div class="course-card">
+              <div class="course-cover">
+                <span class="course-badge">{{ initials(c.nombre) }}</span>
+                <span class="course-logo">UPeU</span>
+                <button class="fast-access" title="Acceso directo">⚡</button>
+              </div>
+              <div class="course-body">
+                <h3>{{ c.nombre }}</h3>
+                <p class="course-sub">Sección {{ c.seccion }}</p>
+                <p class="course-sub">{{ c.periodo }}</p>
+              </div>
+              <div class="course-footer">
+                <span class="docente-avatar">{{ initials(c.docente) }}</span>
+                <span class="docente-name">{{ c.docente }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <aside class="side-column">
+      <div class="side-card">
+        <h3>Sesiones de hoy</h3>
+        <p class="empty">No hay sesiones programadas para hoy.</p>
+      </div>
+
+      <div class="side-card">
+        <h3>Mis pendientes</h3>
+        <p class="empty">No tienes pendientes por entregar.</p>
+        <button class="btn-secondary">Mi mapa de cumplimiento</button>
+      </div>
+
+      <div class="side-card">
+        <h3>Comunicados</h3>
+        <p class="empty">No hay comunicados nuevos.</p>
+      </div>
+    </aside>
+  </div>
+</div>

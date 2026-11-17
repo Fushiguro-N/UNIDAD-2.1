@@ -32,6 +32,15 @@ export class AuthService {
     return this.keycloak.tokenParsed?.['preferred_username'];
   }
 
+  get fullName(): string | undefined {
+    const claims = this.keycloak.tokenParsed;
+    return (
+      claims?.['name'] ||
+      [claims?.['given_name'], claims?.['family_name']].filter(Boolean).join(' ') ||
+      this.username
+    );
+  }
+
   get roles(): string[] {
     return this.keycloak.realmAccess?.roles ?? [];
   }

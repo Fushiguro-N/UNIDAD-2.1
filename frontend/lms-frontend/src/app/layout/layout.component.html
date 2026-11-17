@@ -6,9 +6,8 @@
     </div>
 
     <nav class="nav-group">
-      <a routerLink="/enrolar" routerLinkActive="active" class="nav-link special">Inscribirse</a>
-      @for (e of entities; track e.resource) {
-        <a [routerLink]="['/', e.resource]" routerLinkActive="active" class="nav-link">{{ e.label }}</a>
+      @for (m of modules; track m.key) {
+        <a [routerLink]="m.route ?? ['/', m.key]" routerLinkActive="active" class="nav-link">{{ m.label }}</a>
       }
     </nav>
   </aside>
@@ -17,7 +16,7 @@
     <header class="topbar">
       <button class="icon-btn" (click)="toggleNav()">☰</button>
       <div class="spacer"></div>
-      <span class="username">{{ auth.username }}</span>
+      <span class="username">{{ auth.fullName }}</span>
       <button class="btn-logout" (click)="logout()">Salir</button>
     </header>
 
