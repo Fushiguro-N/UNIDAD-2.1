@@ -20,8 +20,20 @@ public class Estudiante {
     private String nombres;
 
     @Column(length = 150)
+    private String apellidos;
+
+    @Column(name = "codigo_estudiante", length = 9, unique = true)
+    private String codigoEstudiante;
+
+    @Column(length = 150)
     private String email;
 
     @Column(name = "id_usuario_auth")
     private Long idUsuarioAuth;
+
+    @Column(length = 8, unique = true)
+    private String dni;
+
+    @Column(length = 15)
+    private String celular;
 }

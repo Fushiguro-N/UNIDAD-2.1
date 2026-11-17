@@ -42,9 +42,28 @@
           }
         }
       ]
+    },
+    {
+      "clientId": "lms-admin",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": true,
+      "secret": "lms-admin-secret-local-dev"
     }
   ],
   "users": [
+    {
+      "username": "service-account-lms-admin",
+      "enabled": true,
+      "serviceAccountClientId": "lms-admin",
+      "clientRoles": {
+        "realm-management": ["manage-users", "view-users", "query-users"]
+      }
+    },
     {
       "username": "admin",
       "email": "admin@lamb.upeu.edu.pe",

@@ -9,5 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 public class EstadoCuentaResponse {
     private String idEstudiante;
+    private String nombres;
+    private String apellidos;
+    private String dni;
     private Boolean tieneDeudaPendiente;
 }

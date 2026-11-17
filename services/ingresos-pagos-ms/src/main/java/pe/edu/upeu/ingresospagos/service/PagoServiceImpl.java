@@ -7,14 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.ingresospagos.dto.PagoResponse;
 import pe.edu.upeu.ingresospagos.entity.EstadoPago;
-import pe.edu.upeu.ingresospagos.entity.Estudiante;
 import pe.edu.upeu.ingresospagos.entity.Pago;
 import pe.edu.upeu.ingresospagos.event.MatriculaCreadaEvento;
 import pe.edu.upeu.ingresospagos.event.PagoValidadoEvento;
 import pe.edu.upeu.ingresospagos.exception.ResourceNotFoundException;
 import pe.edu.upeu.ingresospagos.mapper.PagoMapper;
 import pe.edu.upeu.ingresospagos.messaging.PagoEventosProducer;
-import pe.edu.upeu.ingresospagos.repository.EstudianteRepository;
 import pe.edu.upeu.ingresospagos.repository.PagoRepository;
 
 import java.time.Instant;
@@ -30,7 +28,7 @@ public class PagoServiceImpl implements PagoService {
     private static final String PAGO_VALIDADO = "pago.validado";
 
     private final PagoRepository pagoRepository;
-    private final EstudianteRepository estudianteRepository;
+    private final EstudianteService estudianteService;
     private final PagoEventosProducer producer;
     private final PagoMapper pagoMapper;
 
@@ -40,7 +38,8 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional
     public void procesar(MatriculaCreadaEvento matricula) {
-        asegurarEstudiante(matricula.getIdEstudiante());
+        estudianteService.registrarSiNoExiste(matricula.getIdEstudiante(),
+                matricula.getNombresEstudiante(), matricula.getApellidosEstudiante());
 
         Pago pago = pagoRepository.save(Pago.builder()
                 .matriculaId(matricula.getMatriculaId())
@@ -78,14 +77,6 @@ public class PagoServiceImpl implements PagoService {
     @Override
     public Optional<PagoResponse> buscarPorMatricula(Long matriculaId) {
         return pagoRepository.findByMatriculaId(matriculaId).map(pagoMapper::toResponse);
-    }
-
-    private void asegurarEstudiante(String idEstudiante) {
-        if (idEstudiante == null || estudianteRepository.existsById(idEstudiante)) {
-            return;
-        }
-        estudianteRepository.save(Estudiante.builder().id(idEstudiante).build());
-        log.info("component=consumer idEstudiante={} status=estudiante_registrado", idEstudiante);
     }
 
     private Pago buscarOFallar(Long id) {
