@@ -39,7 +39,9 @@
                 <td>{{ cell(row, col) }}</td>
               }
               <td class="actions-col">
-                @if (!config().readOnly) {
+                @if (config().readOnly) {
+                  <button class="btn-link" (click)="edit(row)">Ver</button>
+                } @else {
                   <button class="btn-link" (click)="edit(row)">Editar</button>
                 }
                 @if (!config().noDelete) {

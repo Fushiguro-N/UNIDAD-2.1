@@ -41,7 +41,12 @@ export class GenericFormComponent {
         this.editing.set(true);
         this.recordId.set(id);
         this.api.get(resource, id).subscribe({
-          next: (data) => this.form().patchValue(data as object),
+          next: (data) => {
+            this.form().patchValue(data as object);
+            if (cfg.readOnly) {
+              this.form().disable();
+            }
+          },
           error: (err) => this.error.set(err?.error?.message || err?.message || 'Error al cargar registro'),
         });
       } else {

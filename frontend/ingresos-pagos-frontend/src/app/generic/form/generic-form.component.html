@@ -1,5 +1,5 @@
 <div class="form-page">
-  <h1>{{ editing() ? 'Editar' : 'Nuevo' }} {{ config().label }}</h1>
+  <h1>{{ config().readOnly ? 'Ver' : (editing() ? 'Editar' : 'Nuevo') }} {{ config().label }}</h1>
 
   @if (error()) {
     <div class="alert-error">{{ error() }}</div>
@@ -24,14 +24,18 @@
     }
 
     <div class="form-actions">
-      <button type="button" class="btn-secondary" [routerLink]="['/', config().resource]">Cancelar</button>
-      <button type="submit" class="btn-primary" [disabled]="saving()">
-        @if (saving()) {
-          <span class="spinner"></span>
-        } @else {
-          Guardar
-        }
+      <button type="button" class="btn-secondary" [routerLink]="['/', config().resource]">
+        {{ config().readOnly ? 'Volver' : 'Cancelar' }}
       </button>
+      @if (!config().readOnly) {
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          @if (saving()) {
+            <span class="spinner"></span>
+          } @else {
+            Guardar
+          }
+        </button>
+      }
     </div>
   </form>
 </div>
