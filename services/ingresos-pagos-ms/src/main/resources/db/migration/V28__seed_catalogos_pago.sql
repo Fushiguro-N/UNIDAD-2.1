@@ -35,11 +35,11 @@ ON CONFLICT (codigo) DO NOTHING;
 INSERT INTO tarifarios_programa (programa, id_concepto_pago, monto, vigente_desde, vigente_hasta, activo)
 SELECT v.programa, c.id, v.monto, v.vigente_desde, v.vigente_hasta, true
 FROM (VALUES
-    ('Ingenieria de Sistemas', 'Matricula', 350.00, DATE '2026-01-01', NULL),
-    ('Ingenieria de Sistemas', 'Mensualidad', 520.00, DATE '2026-01-01', NULL),
-    ('Administracion y Negocios Internacionales', 'Matricula', 320.00, DATE '2026-01-01', NULL),
-    ('Psicologia', 'Mensualidad', 460.00, DATE '2026-01-01', NULL),
-    ('Contabilidad', 'Mensualidad', 440.00, DATE '2026-01-01', NULL)
+    ('Ingenieria de Sistemas', 'Matricula', 350.00, DATE '2026-01-01', NULL::date),
+    ('Ingenieria de Sistemas', 'Mensualidad', 520.00, DATE '2026-01-01', NULL::date),
+    ('Administracion y Negocios Internacionales', 'Matricula', 320.00, DATE '2026-01-01', NULL::date),
+    ('Psicologia', 'Mensualidad', 460.00, DATE '2026-01-01', NULL::date),
+    ('Contabilidad', 'Mensualidad', 440.00, DATE '2026-01-01', NULL::date)
 ) AS v(programa, concepto, monto, vigente_desde, vigente_hasta)
 JOIN conceptos_pago c ON c.nombre = v.concepto
 WHERE NOT EXISTS (
