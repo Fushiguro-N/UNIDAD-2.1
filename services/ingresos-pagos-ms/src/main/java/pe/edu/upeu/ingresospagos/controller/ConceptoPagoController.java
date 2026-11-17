@@ -1,5 +1,8 @@
 package pe.edu.upeu.ingresospagos.controller;
 
+import pe.edu.upeu.ingresospagos.dto.PageResponse;
+import pe.edu.upeu.ingresospagos.util.PageUtil;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +21,10 @@ public class ConceptoPagoController {
     private final ConceptoPagoService conceptoPagoService;
 
     @GetMapping
-    public List<ConceptoPagoResponse> listar() {
-        return conceptoPagoService.findAll();
+    public PageResponse<ConceptoPagoResponse> listar(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        return PageUtil.paginate(conceptoPagoService.findAll(), page, size);
     }
 
     @GetMapping("/{id}")

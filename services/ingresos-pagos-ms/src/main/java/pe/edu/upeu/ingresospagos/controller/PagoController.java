@@ -1,5 +1,8 @@
 package pe.edu.upeu.ingresospagos.controller;
 
+import pe.edu.upeu.ingresospagos.dto.PageResponse;
+import pe.edu.upeu.ingresospagos.util.PageUtil;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +20,10 @@ public class PagoController {
     private final PagoService pagoService;
 
     @GetMapping
-    public List<PagoResponse> listar() {
-        return pagoService.listar();
+    public PageResponse<PagoResponse> listar(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        return PageUtil.paginate(pagoService.listar(), page, size);
     }
 
     @GetMapping("/{id}")

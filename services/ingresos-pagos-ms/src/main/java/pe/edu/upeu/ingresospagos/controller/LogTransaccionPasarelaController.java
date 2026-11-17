@@ -1,5 +1,8 @@
 package pe.edu.upeu.ingresospagos.controller;
 
+import pe.edu.upeu.ingresospagos.dto.PageResponse;
+import pe.edu.upeu.ingresospagos.util.PageUtil;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +21,10 @@ public class LogTransaccionPasarelaController {
     private final LogTransaccionPasarelaService logTransaccionPasarelaService;
 
     @GetMapping
-    public List<LogTransaccionPasarelaResponse> listar() {
-        return logTransaccionPasarelaService.listar();
+    public PageResponse<LogTransaccionPasarelaResponse> listar(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        return PageUtil.paginate(logTransaccionPasarelaService.listar(), page, size);
     }
 
     @GetMapping("/{id}")

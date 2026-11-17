@@ -1,5 +1,8 @@
 package pe.edu.upeu.ingresospagos.controller;
 
+import pe.edu.upeu.ingresospagos.dto.PageResponse;
+import pe.edu.upeu.ingresospagos.util.PageUtil;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +21,10 @@ public class BecaAsignadaController {
     private final BecaAsignadaService becaAsignadaService;
 
     @GetMapping
-    public List<BecaAsignadaResponse> listar() {
-        return becaAsignadaService.listar();
+    public PageResponse<BecaAsignadaResponse> listar(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        return PageUtil.paginate(becaAsignadaService.listar(), page, size);
     }
 
     @GetMapping("/{id}")
