@@ -80,7 +80,7 @@ export class GenericListComponent {
   cell(row: any, col: string): string {
     const v = row[col];
     if (v === null || v === undefined) return '';
-    if (typeof v === 'object') return JSON.stringify(v);
+    if (typeof v === 'object') return v.nombre ?? v.codigo ?? v.id ?? JSON.stringify(v);
     return String(v);
   }
 
