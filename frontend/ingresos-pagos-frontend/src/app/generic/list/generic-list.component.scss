@@ -51,3 +51,16 @@ th {
   white-space: nowrap;
 }
 
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  .pager-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+}
+

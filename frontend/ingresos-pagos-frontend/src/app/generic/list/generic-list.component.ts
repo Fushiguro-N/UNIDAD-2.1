@@ -26,6 +26,11 @@ export class GenericListComponent {
   readonly error = signal<string | null>(null);
   readonly config = signal(ENTITIES[0]);
 
+  readonly page = signal(0);
+  readonly size = signal(20);
+  readonly totalPages = signal(0);
+  readonly totalElements = signal(0);
+
   constructor() {
     this.route.paramMap.subscribe((params) => {
       const resource = params.get('resource')!;
@@ -35,6 +40,7 @@ export class GenericListComponent {
         return;
       }
       this.config.set(cfg);
+      this.page.set(0);
       this.load(resource);
     });
   }
@@ -42,11 +48,14 @@ export class GenericListComponent {
   load(resource: string): void {
     this.loading.set(true);
     this.error.set(null);
-    this.api.list(resource).subscribe({
-      next: (data) => {
-        this.rows.set(data ?? []);
-        const keys = data && data.length ? Object.keys(data[0]).filter((k) => k !== 'password') : [];
+    this.api.listPaged(resource, this.page(), this.size()).subscribe({
+      next: (res) => {
+        const data = res?.content ?? [];
+        this.rows.set(data);
+        const keys = data.length ? Object.keys(data[0]).filter((k) => k !== 'password') : [];
         this.columns.set(keys);
+        this.totalPages.set(res?.totalPages ?? 0);
+        this.totalElements.set(res?.totalElements ?? 0);
         this.loading.set(false);
       },
       error: (err) => {
@@ -54,6 +63,18 @@ export class GenericListComponent {
         this.loading.set(false);
       },
     });
+  }
+
+  nextPage(): void {
+    if (this.page() + 1 >= this.totalPages()) return;
+    this.page.set(this.page() + 1);
+    this.load(this.config().resource);
+  }
+
+  prevPage(): void {
+    if (this.page() <= 0) return;
+    this.page.set(this.page() - 1);
+    this.load(this.config().resource);
   }
 
   cell(row: any, col: string): string {

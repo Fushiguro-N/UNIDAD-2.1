@@ -51,5 +51,10 @@
         </tbody>
       </table>
     </div>
+    <div class="pager">
+      <button class="btn-secondary" [disabled]="page() === 0" (click)="prevPage()">&laquo; Anterior</button>
+      <span class="pager-info">Página {{ page() + 1 }} de {{ totalPages() || 1 }} ({{ totalElements() }} registros)</span>
+      <button class="btn-secondary" [disabled]="page() + 1 >= totalPages()" (click)="nextPage()">Siguiente &raquo;</button>
+    </div>
   }
 </div>
