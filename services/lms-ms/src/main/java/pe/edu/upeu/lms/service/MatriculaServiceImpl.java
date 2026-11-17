@@ -1,14 +1,11 @@
 package pe.edu.upeu.lms.service;
 
 import pe.edu.upeu.lms.dto.*;
-import pe.edu.upeu.lms.entity.Contenido;
-import pe.edu.upeu.lms.entity.EstadoMatricula;
-import pe.edu.upeu.lms.entity.Matricula;
-import pe.edu.upeu.lms.entity.MatriculaDetalle;
+import pe.edu.upeu.lms.entity.*;
 import pe.edu.upeu.lms.event.MatriculaCreadaEvento;
+import pe.edu.upeu.lms.exception.MatriculaDuplicadaException;
 import pe.edu.upeu.lms.messaging.MatriculaEventosProducer;
-import pe.edu.upeu.lms.repository.ContenidoRepository;
-import pe.edu.upeu.lms.repository.MatriculaRepository;
+import pe.edu.upeu.lms.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,14 +23,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatriculaServiceImpl implements MatriculaService {
 
+    private static final BigDecimal NOTA_MINIMA_APROBATORIA = BigDecimal.valueOf(11);
+
     private final MatriculaRepository matriculaRepository;
-    private final ContenidoRepository contenidoRepository;
+    private final MatriculaDetalleRepository matriculaDetalleRepository;
+    private final SeccionCursoRepository seccionCursoRepository;
+    private final PrerequisitoCursoRepository prerequisitoCursoRepository;
+    private final CalificacionRepository calificacionRepository;
     private final EstadoCuentaConsultaService estadoCuentaConsultaService;
+    private final EstudianteInfoConsultaService estudianteInfoConsultaService;
     private final MatriculaEventosProducer producer;
 
     @Override
     @Transactional
-    public MatriculaResponse crear(MatriculaRequest request, String idEstudiante) {
+    public MatriculaResponse crear(MatriculaRequest request, String idEstudiante, String nombresEstudiante, String apellidosEstudiante) {
+        for (DetalleMatriculaRequest item : request.getDetalles()) {
+            long yaInscrito = matriculaDetalleRepository.contarInscripcionExistente(
+                    item.getIdSeccionCurso(), idEstudiante, EstadoMatricula.RECHAZADA);
+            if (yaInscrito > 0) {
+                throw new MatriculaDuplicadaException(
+                        "Ya tienes una matricula registrada en la seccion " + item.getIdSeccionCurso());
+            }
+        }
+
         Matricula matricula = Matricula.builder()
                 .idEstudiante(idEstudiante)
                 .periodoAcademico(request.getPeriodoAcademico())
@@ -52,40 +66,43 @@ public class MatriculaServiceImpl implements MatriculaService {
             return toResponse(guardada);
         }
 
+        Set<Long> aprobados = cursosAprobados(idEstudiante);
+
         List<MatriculaDetalle> detalles = new ArrayList<>();
-        BigDecimal total = BigDecimal.ZERO;
         boolean validacionCompleta = true;
 
         for (DetalleMatriculaRequest item : request.getDetalles()) {
-            Contenido contenido = contenidoRepository.findById(item.getIdContenido()).orElse(null);
+            SeccionCurso seccion = seccionCursoRepository.findById(item.getIdSeccionCurso()).orElse(null);
 
-            if (contenido == null) {
+            if (seccion == null || !Boolean.TRUE.equals(seccion.getActivo())
+                    || !Boolean.TRUE.equals(seccion.getPeriodoAcademico().getActivo())) {
                 validacionCompleta = false;
                 detalles.add(MatriculaDetalle.builder()
                         .matricula(matricula)
-                        .idContenido(item.getIdContenido())
-                        .nombreContenido(null)
-                        .cantidad(item.getCantidad())
-                        .precioUnitario(null)
+                        .idSeccionCurso(item.getIdSeccionCurso())
                         .build());
                 continue;
             }
 
-            BigDecimal subtotal = contenido.getPrecio()
-                    .multiply(BigDecimal.valueOf(item.getCantidad()));
-            total = total.add(subtotal);
+            long inscritos = matriculaDetalleRepository.contarInscritosEnSeccion(
+                    seccion.getId(), EstadoMatricula.RECHAZADA);
+
+            boolean cupoDisponible = inscritos < seccion.getCupoMaximo();
+            boolean prerequisitosOk = prerequisitosCumplidos(seccion.getCurso().getId(), aprobados);
+
+            if (!cupoDisponible || !prerequisitosOk) {
+                validacionCompleta = false;
+            }
 
             detalles.add(MatriculaDetalle.builder()
                     .matricula(matricula)
-                    .idContenido(item.getIdContenido())
-                    .nombreContenido(contenido.getNombre())
-                    .cantidad(item.getCantidad())
-                    .precioUnitario(contenido.getPrecio())
+                    .idSeccionCurso(seccion.getId())
+                    .nombreCurso(seccion.getCurso().getNombre())
+                    .nombreSeccion(seccion.getNombreSeccion())
                     .build());
         }
 
         matricula.setDetalles(detalles);
-        matricula.setTotal(validacionCompleta ? total : null);
         matricula.setEstado(validacionCompleta ? EstadoMatricula.PENDIENTE_PAGO : EstadoMatricula.PENDIENTE_VALIDACION);
 
         Matricula guardada = matriculaRepository.save(matricula);
@@ -95,6 +112,8 @@ public class MatriculaServiceImpl implements MatriculaService {
                     .tipoEvento("matricula.creada")
                     .matriculaId(guardada.getId())
                     .idEstudiante(guardada.getIdEstudiante())
+                    .nombresEstudiante(nombresEstudiante)
+                    .apellidosEstudiante(apellidosEstudiante)
                     .total(guardada.getTotal())
                     .metodoPago(guardada.getMetodoPago())
                     .origen("lms-ms")
@@ -102,6 +121,22 @@ public class MatriculaServiceImpl implements MatriculaService {
                     .build());
         }
         return toResponse(guardada);
+    }
+
+    private Set<Long> cursosAprobados(String idEstudiante) {
+        return calificacionRepository.findAllConEvaluacion().stream()
+                .filter(c -> c.getIdEstudiante().equals(idEstudiante))
+                .filter(c -> c.getNota().compareTo(NOTA_MINIMA_APROBATORIA) >= 0)
+                .map(c -> c.getEvaluacion().getCurso().getId())
+                .collect(Collectors.toSet());
+    }
+
+    private boolean prerequisitosCumplidos(Long idCurso, Set<Long> aprobados) {
+        Set<Long> requeridos = prerequisitoCursoRepository.findAllConCursos().stream()
+                .filter(p -> p.getCurso().getId().equals(idCurso))
+                .map(p -> p.getCursoPrerequisito().getId())
+                .collect(Collectors.toSet());
+        return aprobados.containsAll(requeridos);
     }
 
     @Override
@@ -132,22 +167,27 @@ public class MatriculaServiceImpl implements MatriculaService {
                 .collect(Collectors.toList());
     }
 
+    private String nonBlank(String value) {
+        return value != null ? value : "";
+    }
+
     private MatriculaResponse toResponse(Matricula matricula) {
         List<DetalleMatriculaResponse> detalles = matricula.getDetalles().stream()
                 .map(d -> DetalleMatriculaResponse.builder()
-                        .idContenido(d.getIdContenido())
-                        .nombreContenido(d.getNombreContenido())
-                        .cantidad(d.getCantidad())
-                        .precioUnitario(d.getPrecioUnitario())
-                        .subtotal(d.getPrecioUnitario() == null
-                                ? null
-                                : d.getPrecioUnitario().multiply(BigDecimal.valueOf(d.getCantidad())))
+                        .idSeccionCurso(d.getIdSeccionCurso())
+                        .nombreCurso(d.getNombreCurso())
+                        .nombreSeccion(d.getNombreSeccion())
                         .build())
                 .collect(Collectors.toList());
 
+        EstudianteInfoResponse info = estudianteInfoConsultaService.consultarInfo(matricula.getIdEstudiante());
+
         return MatriculaResponse.builder()
                 .id(matricula.getId())
-                .idEstudiante(matricula.getIdEstudiante())
+                .codigoEstudiante(info != null ? info.getCodigoEstudiante() : null)
+                .nombreEstudiante(info != null
+                        ? String.join(" ", nonBlank(info.getNombres()), nonBlank(info.getApellidos())).trim()
+                        : null)
                 .periodoAcademico(matricula.getPeriodoAcademico())
                 .createdAt(matricula.getCreatedAt())
                 .estado(matricula.getEstado().name())
