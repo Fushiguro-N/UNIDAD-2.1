@@ -11,9 +11,16 @@
   }
 
   @if (loading()) {
-    <p>Cargando...</p>
+    <div class="skeleton-list">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
   } @else if (!rows().length) {
-    <p class="empty">Sin registros.</p>
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <p class="empty">No hay registros para mostrar.</p>
+    </div>
   } @else {
     <div class="table-wrap">
       <table>

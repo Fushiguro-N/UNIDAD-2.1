@@ -3,9 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { ToastService } from '../../core/toast.service';
 
 interface EstadoCuenta {
   idEstudiante: string;
+  nombres: string;
+  apellidos: string;
+  dni: string;
   tieneDeudaPendiente: boolean;
 }
 
@@ -19,6 +23,7 @@ interface EstadoCuenta {
 export class EstadoCuentaComponent {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
+  private readonly toast = inject(ToastService);
 
   readonly form = this.fb.group({
     idEstudiante: ['', Validators.required],
@@ -43,7 +48,11 @@ export class EstadoCuentaComponent {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err?.error?.message || err?.message || 'No se encontro informacion');
+        const message = err?.status === 404
+          ? 'No existe un estudiante con ese ID.'
+          : err?.error?.message || 'Error al consultar el estado de cuenta';
+        this.error.set(message);
+        this.toast.error(message);
         this.loading.set(false);
       },
     });

@@ -3,6 +3,8 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { ENTITIES } from '../../core/entities.config';
+import { ToastService } from '../../core/toast.service';
+import { ConfirmService } from '../../core/confirm.service';
 
 @Component({
   selector: 'app-generic-list',
@@ -15,6 +17,8 @@ export class GenericListComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastService);
+  private readonly confirmService = inject(ConfirmService);
 
   readonly rows = signal<any[]>([]);
   readonly columns = signal<string[]>([]);
@@ -71,11 +75,23 @@ export class GenericListComponent {
     this.router.navigate([this.config().resource, 'nuevo']);
   }
 
-  remove(row: any): void {
-    if (!confirm('¿Eliminar este registro?')) return;
+  async remove(row: any): Promise<void> {
+    const ok = await this.confirmService.confirm('¿Eliminar este registro? Esta acción no se puede deshacer.', {
+      title: 'Eliminar registro',
+      confirmText: 'Eliminar',
+      danger: true,
+    });
+    if (!ok) return;
     this.api.delete(this.config().resource, this.idOf(row)).subscribe({
-      next: () => this.load(this.config().resource),
-      error: (err) => this.error.set(err?.error?.message || err?.message || 'Error al eliminar'),
+      next: () => {
+        this.load(this.config().resource);
+        this.toast.success('Registro eliminado correctamente');
+      },
+      error: (err) => {
+        const message = err?.error?.message || err?.message || 'Error al eliminar';
+        this.error.set(message);
+        this.toast.error(message);
+      },
     });
   }
 }

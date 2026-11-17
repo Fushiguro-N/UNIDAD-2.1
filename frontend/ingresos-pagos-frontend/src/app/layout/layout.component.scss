@@ -78,6 +78,35 @@
     border: 1px solid var(--sidebar-hover);
     margin-bottom: 0.5rem;
   }
+
+  &.nav-link-indent {
+    padding-left: 1.6rem;
+    font-size: 0.82rem;
+  }
+}
+
+.nav-group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  margin-top: 0.4rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--sidebar-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background: var(--sidebar-hover);
+    color: var(--sidebar-text);
+  }
 }
 
 .main {
@@ -126,4 +155,25 @@
 .content {
   flex: 1;
   overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1200;
+    width: 260px;
+
+    &.collapsed {
+      width: 0;
+    }
+  }
+
+  .username {
+    display: none;
+  }
+
+  .topbar {
+    padding: 0.85rem 1rem;
+  }
 }

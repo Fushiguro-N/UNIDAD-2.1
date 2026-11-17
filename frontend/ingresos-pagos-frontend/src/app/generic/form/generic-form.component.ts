@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { ENTITIES, EntityConfig } from '../../core/entities.config';
+import { ToastService } from '../../core/toast.service';
 
 @Component({
   selector: 'app-generic-form',
@@ -16,6 +17,7 @@ export class GenericFormComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastService);
 
   readonly config = signal<EntityConfig>(ENTITIES[0]);
   readonly form = signal(new FormGroup({}));
@@ -73,11 +75,37 @@ export class GenericFormComponent {
       ? this.api.update(resource, this.recordId()!, body)
       : this.api.create(resource, body);
     req.subscribe({
-      next: () => this.router.navigate(['/', resource]),
+      next: () => {
+        this.saving.set(false);
+        this.toast.success(this.editing() ? 'Registro actualizado correctamente' : 'Registro creado correctamente');
+        this.router.navigate(['/', resource]);
+      },
       error: (err) => {
-        this.error.set(err?.error?.message || err?.message || 'Error al guardar');
+        const message = err?.error?.message || err?.message || 'Error al guardar';
+        this.error.set(message);
+        this.toast.error(message);
+        this.applyFieldErrors(err?.error?.fieldErrors);
         this.saving.set(false);
       },
     });
+  }
+
+  private applyFieldErrors(fieldErrors?: Record<string, string>): void {
+    if (!fieldErrors) return;
+    for (const [field, message] of Object.entries(fieldErrors)) {
+      const control = this.form().get(field);
+      if (control) {
+        control.setErrors({ ...(control.errors ?? {}), server: message });
+        control.markAsTouched();
+      }
+    }
+  }
+
+  fieldError(fieldName: string): string | null {
+    const control = this.form().get(fieldName);
+    if (!control || !control.touched) return null;
+    if (control.errors?.['server']) return control.errors['server'];
+    if (control.errors?.['required']) return 'Este campo es obligatorio';
+    return null;
   }
 }
