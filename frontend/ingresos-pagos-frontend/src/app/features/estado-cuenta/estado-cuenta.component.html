@@ -1,6 +1,8 @@
 <div class="form-page">
-  <h1>Estado de Cuenta del Estudiante</h1>
-  <p class="hint">Consulta si un estudiante tiene deudas pendientes de pago.</p>
+  <div class="banner-header">
+    <h1>Estado Financiero</h1>
+    <p class="hint">Consulta si un estudiante tiene deudas pendientes de pago.</p>
+  </div>
 
   <form [formGroup]="form" (ngSubmit)="buscar()" class="search-form">
     <div class="field">
@@ -8,7 +10,7 @@
       <input id="idEstudiante" type="text" formControlName="idEstudiante" placeholder="UUID del estudiante" />
     </div>
     <button type="submit" class="btn-primary" [disabled]="loading()">
-      {{ loading() ? 'Buscando...' : 'Buscar' }}
+      {{ loading() ? 'Filtrando...' : 'Filtrar' }}
     </button>
   </form>
 
@@ -18,7 +20,8 @@
 
   @if (result()) {
     <div class="result-card" [class.debt]="result()!.tieneDeudaPendiente">
-      <p><strong>Estudiante:</strong> {{ result()!.idEstudiante }}</p>
+      <p><strong>Estudiante:</strong> {{ result()!.nombres }} {{ result()!.apellidos }}</p>
+      <p><strong>DNI:</strong> {{ result()!.dni }}</p>
       <p>
         <strong>Estado:</strong>
         @if (result()!.tieneDeudaPendiente) {

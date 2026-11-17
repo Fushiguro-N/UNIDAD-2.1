@@ -1,20 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg: #f3f4f6;
+  --bg: #f4f6f9;
   --surface: #ffffff;
   --surface-alt: #f8f8f9;
   --border: #e2e4e9;
   --text-strong: #111827;
   --text-muted: #6b7280;
 
-  --accent: #d4a017;
-  --accent-contrast: #1c1c1c;
+  --accent: #f2b705;
+  --accent-contrast: #0f1d4a;
 
-  --sidebar-bg: #0f172a;
+  --sidebar-bg: #0f1d4a;
   --sidebar-text: #f5f1e6;
-  --sidebar-text-muted: #9aa5b8;
-  --sidebar-hover: rgba(212, 160, 23, 0.18);
+  --sidebar-text-muted: #9aa8c9;
+  --sidebar-hover: rgba(242, 183, 5, 0.18);
+
+  --debit: #c0392b;
+  --credit: #1a7f37;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
