@@ -46,6 +46,8 @@ app:
     topic:
       matriculas: lms-matricula-eventos
       pagos: pago-eventos
+  uploads:
+    dir: ${UPLOADS_DIR:/data/uploads/entregas-tarea}
 
 springdoc:
   swagger-ui:

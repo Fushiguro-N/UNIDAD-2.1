@@ -50,6 +50,16 @@ app:
     topic:
       matriculas: lms-matricula-eventos
       pagos: pago-eventos
+  keycloak:
+    admin:
+      server-url: http://localhost:18180
+      realm: lamb
+      client-id: lms-admin
+      client-secret: lms-admin-secret-local-dev
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
 
 logging:
   level:

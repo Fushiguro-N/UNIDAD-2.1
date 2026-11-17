@@ -45,6 +45,18 @@ app:
     topic:
       matriculas: lms-matricula-eventos
       pagos: pago-eventos
+  keycloak:
+    admin:
+      server-url: ${KEYCLOAK_SERVER_URL:http://lamb-keycloak:8080}
+      realm: lamb
+      client-id: lms-admin
+      client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
 
 management:
   endpoints:
