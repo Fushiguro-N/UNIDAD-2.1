@@ -25,7 +25,7 @@ export class EnrolarComponent implements OnInit {
   private readonly toast = inject(ToastService);
 
   readonly form = this.fb.group({
-    periodoAcademico: [''],
+    periodoAcademico: ['', Validators.required],
     metodoPago: ['', Validators.required],
     detalles: this.fb.array([] as any[]),
   });

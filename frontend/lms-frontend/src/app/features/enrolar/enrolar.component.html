@@ -12,8 +12,11 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="dynamic-form">
     <div class="field">
-      <label for="periodoAcademico">Periodo Academico</label>
+      <label for="periodoAcademico">Periodo Academico *</label>
       <input id="periodoAcademico" type="text" formControlName="periodoAcademico" placeholder="2026-I" />
+      @if (form.controls.periodoAcademico.invalid && form.controls.periodoAcademico.touched) {
+        <div class="field-error">El periodo academico es obligatorio.</div>
+      }
     </div>
 
     <div class="field">
