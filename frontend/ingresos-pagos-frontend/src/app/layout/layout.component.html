@@ -6,9 +6,28 @@
     </div>
 
     <nav class="nav-group">
-      <a routerLink="/estado-cuenta" routerLinkActive="active" class="nav-link special">Estado de Cuenta</a>
-      @for (e of entities; track e.resource) {
-        <a [routerLink]="['/', e.resource]" routerLinkActive="active" class="nav-link">{{ e.label }}</a>
+      @if (auth.isAdmin || auth.isEstudiante) {
+        <a routerLink="/estado-cuenta" routerLinkActive="active" class="nav-link special">Estado de Cuenta</a>
+      }
+
+      @if (auth.isEstudiante) {
+        <a routerLink="/realizar-pago" routerLinkActive="active" class="nav-link special">Realizar Pago</a>
+      }
+
+      @if (auth.isAdmin) {
+        @for (g of adminGroups; track g.group) {
+          <button type="button" class="nav-group-toggle" (click)="toggleGroup(g.group)">
+            <span>{{ g.group }}</span>
+            <span>{{ isGroupOpen(g.group) ? '▾' : '▸' }}</span>
+          </button>
+          @if (isGroupOpen(g.group)) {
+            @for (e of g.entities; track e.resource) {
+              <a [routerLink]="['/', e.resource]" routerLinkActive="active" class="nav-link nav-link-indent">{{
+                e.label
+              }}</a>
+            }
+          }
+        }
       }
     </nav>
   </aside>

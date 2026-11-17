@@ -40,6 +40,18 @@ export class AuthService {
     return this.roles.includes(role);
   }
 
+  get isAdmin(): boolean {
+    return this.hasRole('ADMIN');
+  }
+
+  get isEstudiante(): boolean {
+    return this.hasRole('ESTUDIANTE');
+  }
+
+  get isDocente(): boolean {
+    return this.hasRole('DOCENTE');
+  }
+
   logout(): void {
     this.keycloak.logout({ redirectUri: window.location.origin });
   }
