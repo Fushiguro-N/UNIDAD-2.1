@@ -1,5 +1,8 @@
 package pe.edu.upeu.lms.controller;
 
+import pe.edu.upeu.lms.dto.PageResponse;
+import pe.edu.upeu.lms.util.PageUtil;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +21,10 @@ public class ModalidadCursoController {
     private final ModalidadCursoService modalidadCursoService;
 
     @GetMapping
-    public List<ModalidadCursoResponse> listar() {
-        return modalidadCursoService.listar();
+    public PageResponse<ModalidadCursoResponse> listar(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        return PageUtil.paginate(modalidadCursoService.listar(), page, size);
     }
 
     @GetMapping("/{id}")

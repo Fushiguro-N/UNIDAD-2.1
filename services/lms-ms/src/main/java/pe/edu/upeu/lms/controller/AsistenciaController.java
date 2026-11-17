@@ -3,10 +3,15 @@ package pe.edu.upeu.lms.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.lms.dto.AsistenciaRequest;
 import pe.edu.upeu.lms.dto.AsistenciaResponse;
+import pe.edu.upeu.lms.dto.PageResponse;
 import pe.edu.upeu.lms.service.AsistenciaService;
+import pe.edu.upeu.lms.util.JwtRoleUtils;
+import pe.edu.upeu.lms.util.PageUtil;
 
 import java.util.List;
 
@@ -18,8 +23,13 @@ public class AsistenciaController {
     private final AsistenciaService asistenciaService;
 
     @GetMapping
-    public List<AsistenciaResponse> listar() {
-        return asistenciaService.listar();
+    public PageResponse<AsistenciaResponse> listar(@AuthenticationPrincipal Jwt jwt,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        List<AsistenciaResponse> result = JwtRoleUtils.isSoloEstudiante(jwt)
+                ? asistenciaService.listarPorEstudiante(jwt.getSubject())
+                : asistenciaService.listar(jwt.getClaimAsString("email"));
+        return PageUtil.paginate(result, page, size);
     }
 
     @GetMapping("/{id}")

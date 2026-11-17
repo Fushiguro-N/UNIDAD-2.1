@@ -1,5 +1,8 @@
 package pe.edu.upeu.lms.controller;
 
+import pe.edu.upeu.lms.dto.PageResponse;
+import pe.edu.upeu.lms.util.PageUtil;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +21,10 @@ public class HorarioClaseController {
     private final HorarioClaseService horarioClaseService;
 
     @GetMapping
-    public List<HorarioClaseResponse> listar() {
-        return horarioClaseService.listar();
+    public PageResponse<HorarioClaseResponse> listar(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        return PageUtil.paginate(horarioClaseService.listar(), page, size);
     }
 
     @GetMapping("/{id}")

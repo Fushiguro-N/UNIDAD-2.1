@@ -3,10 +3,15 @@ package pe.edu.upeu.lms.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.lms.dto.AvanceContenidoRequest;
 import pe.edu.upeu.lms.dto.AvanceContenidoResponse;
+import pe.edu.upeu.lms.dto.PageResponse;
 import pe.edu.upeu.lms.service.AvanceContenidoService;
+import pe.edu.upeu.lms.util.JwtRoleUtils;
+import pe.edu.upeu.lms.util.PageUtil;
 
 import java.util.List;
 
@@ -18,8 +23,13 @@ public class AvanceContenidoController {
     private final AvanceContenidoService avanceContenidoService;
 
     @GetMapping
-    public List<AvanceContenidoResponse> listar() {
-        return avanceContenidoService.listar();
+    public PageResponse<AvanceContenidoResponse> listar(@AuthenticationPrincipal Jwt jwt,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        List<AvanceContenidoResponse> result = JwtRoleUtils.isSoloEstudiante(jwt)
+                ? avanceContenidoService.listarPorEstudiante(jwt.getSubject())
+                : avanceContenidoService.listar();
+        return PageUtil.paginate(result, page, size);
     }
 
     @GetMapping("/{id}")
@@ -42,5 +52,13 @@ public class AvanceContenidoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
         avanceContenidoService.eliminar(id);
+    }
+
+    @GetMapping("/progreso")
+    public java.math.BigDecimal progreso(@AuthenticationPrincipal Jwt jwt, @RequestParam String idEstudiante, @RequestParam Long idCurso) {
+        if (JwtRoleUtils.isSoloEstudiante(jwt)) {
+            return avanceContenidoService.calcularProgresoCurso(jwt.getSubject(), idCurso);
+        }
+        return avanceContenidoService.calcularProgresoCurso(idEstudiante, idCurso);
     }
 }
