@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface AvanceContenidoRepository extends JpaRepository<AvanceContenido, Long> {
 
-    @Query("SELECT a FROM AvanceContenido a JOIN FETCH a.contenido")
-    List<AvanceContenido> findAllConContenido();
+    @Query("SELECT a FROM AvanceContenido a JOIN FETCH a.recurso")
+    List<AvanceContenido> findAllConRecurso();
+
+    @Query("SELECT a FROM AvanceContenido a JOIN FETCH a.recurso r WHERE a.idEstudiante = :idEstudiante AND r.curso.id = :idCurso")
+    List<AvanceContenido> findAllConRecursoPorEstudianteYCurso(String idEstudiante, Long idCurso);
 }

@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import pe.edu.upeu.lms.dto.AvanceContenidoRequest;
 import pe.edu.upeu.lms.dto.AvanceContenidoResponse;
 import pe.edu.upeu.lms.entity.AvanceContenido;
-import pe.edu.upeu.lms.entity.Contenido;
+import pe.edu.upeu.lms.entity.RecursoComplementario;
 import pe.edu.upeu.lms.exception.ResourceNotFoundException;
 import pe.edu.upeu.lms.mapper.AvanceContenidoMapper;
 import pe.edu.upeu.lms.repository.AvanceContenidoRepository;
-import pe.edu.upeu.lms.repository.ContenidoRepository;
+import pe.edu.upeu.lms.repository.RecursoComplementarioRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,10 +22,17 @@ public class AvanceContenidoService {
 
     private final AvanceContenidoRepository avanceContenidoRepository;
     private final AvanceContenidoMapper avanceContenidoMapper;
-    private final ContenidoRepository contenidoRepository;
+    private final RecursoComplementarioRepository recursoComplementarioRepository;
 
     public List<AvanceContenidoResponse> listar() {
-        return avanceContenidoRepository.findAllConContenido().stream()
+        return avanceContenidoRepository.findAllConRecurso().stream()
+                .map(avanceContenidoMapper::toResponse)
+                .toList();
+    }
+
+    public List<AvanceContenidoResponse> listarPorEstudiante(String idEstudiante) {
+        return avanceContenidoRepository.findAllConRecurso().stream()
+                .filter(a -> idEstudiante.equals(a.getIdEstudiante()))
                 .map(avanceContenidoMapper::toResponse)
                 .toList();
     }
@@ -34,7 +43,7 @@ public class AvanceContenidoService {
 
     public AvanceContenidoResponse crear(AvanceContenidoRequest request) {
         AvanceContenido avanceContenido = avanceContenidoMapper.toEntity(request);
-        avanceContenido.setContenido(buscarContenidoOFallar(request.getContenidoId()));
+        avanceContenido.setRecurso(buscarRecursoOFallar(request.getIdRecurso()));
         avanceContenido.setFechaActualizacion(LocalDateTime.now());
         return avanceContenidoMapper.toResponse(avanceContenidoRepository.save(avanceContenido));
     }
@@ -43,7 +52,7 @@ public class AvanceContenidoService {
         AvanceContenido avanceContenido = buscarOFallar(id);
         avanceContenido.setIdEstudiante(request.getIdEstudiante());
         avanceContenido.setConsumido(request.getConsumido());
-        avanceContenido.setContenido(buscarContenidoOFallar(request.getContenidoId()));
+        avanceContenido.setRecurso(buscarRecursoOFallar(request.getIdRecurso()));
         avanceContenido.setFechaActualizacion(LocalDateTime.now());
         return avanceContenidoMapper.toResponse(avanceContenidoRepository.save(avanceContenido));
     }
@@ -52,13 +61,25 @@ public class AvanceContenidoService {
         avanceContenidoRepository.delete(buscarOFallar(id));
     }
 
+    public BigDecimal calcularProgresoCurso(String idEstudiante, Long idCurso) {
+        List<AvanceContenido> avances = avanceContenidoRepository
+                .findAllConRecursoPorEstudianteYCurso(idEstudiante, idCurso);
+        if (avances.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        long completados = avances.stream().filter(a -> Boolean.TRUE.equals(a.getConsumido())).count();
+        return BigDecimal.valueOf(completados)
+                .multiply(BigDecimal.valueOf(100))
+                .divide(BigDecimal.valueOf(avances.size()), 2, RoundingMode.HALF_UP);
+    }
+
     private AvanceContenido buscarOFallar(Long id) {
         return avanceContenidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Avance de contenido no encontrado: " + id));
     }
 
-    private Contenido buscarContenidoOFallar(Long contenidoId) {
-        return contenidoRepository.findById(contenidoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Contenido no encontrado: " + contenidoId));
+    private RecursoComplementario buscarRecursoOFallar(Long idRecurso) {
+        return recursoComplementarioRepository.findById(idRecurso)
+                .orElseThrow(() -> new ResourceNotFoundException("Recurso complementario no encontrado: " + idRecurso));
     }
 }

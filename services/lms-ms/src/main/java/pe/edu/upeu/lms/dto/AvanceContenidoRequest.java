@@ -11,7 +11,7 @@ import lombok.Setter;
 public class AvanceContenidoRequest {
 
     @NotNull
-    private Long contenidoId;
+    private Long idRecurso;
 
     @NotBlank
     @Size(max = 36)

@@ -2,7 +2,6 @@ package pe.edu.upeu.lms.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "matricula_detalles")
@@ -21,15 +20,12 @@ public class MatriculaDetalle {
     @JoinColumn(name = "id_matricula", nullable = false)
     private Matricula matricula;
 
-    @Column(name = "id_contenido", nullable = false)
-    private Long idContenido;
+    @Column(name = "id_seccion_curso", nullable = false)
+    private Long idSeccionCurso;
 
-    @Column(name = "nombre_contenido", length = 150)
-    private String nombreContenido;
+    @Column(name = "nombre_curso", length = 100)
+    private String nombreCurso;
 
-    @Column(nullable = false)
-    private Integer cantidad;
-
-    @Column(name = "precio_unitario")
-    private BigDecimal precioUnitario;
+    @Column(name = "nombre_seccion", length = 10)
+    private String nombreSeccion;
 }

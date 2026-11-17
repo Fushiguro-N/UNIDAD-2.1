@@ -10,4 +10,7 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
 
     @Query("SELECT a FROM Asistencia a JOIN FETCH a.sesionClase")
     List<Asistencia> findAllConSesionClase();
+
+    @Query("SELECT a FROM Asistencia a JOIN FETCH a.sesionClase sc JOIN sc.seccionCurso sec WHERE sec.docente.id = :docenteId")
+    List<Asistencia> findAllConSesionClasePorDocente(Long docenteId);
 }

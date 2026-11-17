@@ -9,6 +9,7 @@ import pe.edu.upeu.lms.entity.Tarea;
 import pe.edu.upeu.lms.exception.ResourceNotFoundException;
 import pe.edu.upeu.lms.mapper.TareaMapper;
 import pe.edu.upeu.lms.repository.CursoRepository;
+import pe.edu.upeu.lms.repository.DocenteRepository;
 import pe.edu.upeu.lms.repository.TareaRepository;
 
 import java.util.List;
@@ -20,9 +21,13 @@ public class TareaService {
     private final TareaRepository tareaRepository;
     private final TareaMapper tareaMapper;
     private final CursoRepository cursoRepository;
+    private final DocenteRepository docenteRepository;
 
-    public List<TareaResponse> listar() {
-        return tareaRepository.findAllConCurso().stream()
+    public List<TareaResponse> listar(String emailDocente) {
+        List<Tarea> tareas = docenteRepository.findByEmail(emailDocente)
+                .map(d -> tareaRepository.findAllConCursoPorDocente(d.getId()))
+                .orElseGet(tareaRepository::findAllConCurso);
+        return tareas.stream()
                 .map(tareaMapper::toResponse)
                 .toList();
     }

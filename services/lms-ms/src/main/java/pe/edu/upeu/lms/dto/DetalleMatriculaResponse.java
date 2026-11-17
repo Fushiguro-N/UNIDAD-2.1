@@ -1,7 +1,6 @@
 package pe.edu.upeu.lms.dto;
 
 import lombok.*;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -9,9 +8,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DetalleMatriculaResponse {
-    private Long idContenido;
-    private String nombreContenido;
-    private Integer cantidad;
-    private BigDecimal precioUnitario;
-    private BigDecimal subtotal;
+    private Long idSeccionCurso;
+    private String nombreCurso;
+    private String nombreSeccion;
 }

@@ -19,8 +19,8 @@ public class AvanceContenido {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_contenido", nullable = false)
-    private Contenido contenido;
+    @JoinColumn(name = "id_recurso", nullable = false)
+    private RecursoComplementario recurso;
 
     @Column(name = "id_estudiante", nullable = false, length = 36)
     private String idEstudiante;

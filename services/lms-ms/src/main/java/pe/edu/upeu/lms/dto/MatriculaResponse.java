@@ -12,7 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 public class MatriculaResponse {
     private Long id;
-    private String idEstudiante;
+    private String codigoEstudiante;
+    private String nombreEstudiante;
     private String periodoAcademico;
     private LocalDateTime createdAt;
     private String estado;

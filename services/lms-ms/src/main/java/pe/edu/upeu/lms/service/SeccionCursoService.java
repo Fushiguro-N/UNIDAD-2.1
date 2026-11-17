@@ -27,8 +27,11 @@ public class SeccionCursoService {
     private final DocenteRepository docenteRepository;
     private final PeriodoAcademicoRepository periodoAcademicoRepository;
 
-    public List<SeccionCursoResponse> listar() {
-        return seccionCursoRepository.findAllConRelaciones().stream()
+    public List<SeccionCursoResponse> listar(String emailDocente) {
+        List<SeccionCurso> secciones = docenteRepository.findByEmail(emailDocente)
+                .map(d -> seccionCursoRepository.findAllConRelacionesPorDocente(d.getId()))
+                .orElseGet(seccionCursoRepository::findAllConRelaciones);
+        return secciones.stream()
                 .map(seccionCursoMapper::toResponse)
                 .toList();
     }

@@ -16,6 +16,8 @@ public class MatriculaCreadaEvento {
     private String tipoEvento;
     private Long matriculaId;
     private String idEstudiante;
+    private String nombresEstudiante;
+    private String apellidosEstudiante;
     private BigDecimal total;
     private String metodoPago;
     private String origen;

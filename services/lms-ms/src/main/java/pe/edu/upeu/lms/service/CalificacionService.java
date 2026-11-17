@@ -27,6 +27,13 @@ public class CalificacionService {
                 .toList();
     }
 
+    public List<CalificacionResponse> listarPorEstudiante(String idEstudiante) {
+        return calificacionRepository.findAllConEvaluacion().stream()
+                .filter(c -> idEstudiante.equals(c.getIdEstudiante()))
+                .map(calificacionMapper::toResponse)
+                .toList();
+    }
+
     public CalificacionResponse obtener(Long id) {
         return calificacionMapper.toResponse(buscarOFallar(id));
     }

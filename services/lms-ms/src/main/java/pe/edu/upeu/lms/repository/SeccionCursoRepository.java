@@ -10,4 +10,7 @@ public interface SeccionCursoRepository extends JpaRepository<SeccionCurso, Long
 
     @Query("SELECT s FROM SeccionCurso s JOIN FETCH s.curso JOIN FETCH s.docente JOIN FETCH s.periodoAcademico")
     List<SeccionCurso> findAllConRelaciones();
+
+    @Query("SELECT s FROM SeccionCurso s JOIN FETCH s.curso JOIN FETCH s.docente JOIN FETCH s.periodoAcademico WHERE s.docente.id = :docenteId")
+    List<SeccionCurso> findAllConRelacionesPorDocente(Long docenteId);
 }

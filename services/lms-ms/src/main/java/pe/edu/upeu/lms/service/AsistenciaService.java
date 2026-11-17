@@ -9,6 +9,7 @@ import pe.edu.upeu.lms.entity.SesionClase;
 import pe.edu.upeu.lms.exception.ResourceNotFoundException;
 import pe.edu.upeu.lms.mapper.AsistenciaMapper;
 import pe.edu.upeu.lms.repository.AsistenciaRepository;
+import pe.edu.upeu.lms.repository.DocenteRepository;
 import pe.edu.upeu.lms.repository.SesionClaseRepository;
 
 import java.time.LocalDateTime;
@@ -21,9 +22,20 @@ public class AsistenciaService {
     private final AsistenciaRepository asistenciaRepository;
     private final AsistenciaMapper asistenciaMapper;
     private final SesionClaseRepository sesionClaseRepository;
+    private final DocenteRepository docenteRepository;
 
-    public List<AsistenciaResponse> listar() {
+    public List<AsistenciaResponse> listar(String emailDocente) {
+        List<Asistencia> asistencias = docenteRepository.findByEmail(emailDocente)
+                .map(d -> asistenciaRepository.findAllConSesionClasePorDocente(d.getId()))
+                .orElseGet(asistenciaRepository::findAllConSesionClase);
+        return asistencias.stream()
+                .map(asistenciaMapper::toResponse)
+                .toList();
+    }
+
+    public List<AsistenciaResponse> listarPorEstudiante(String idEstudiante) {
         return asistenciaRepository.findAllConSesionClase().stream()
+                .filter(a -> idEstudiante.equals(a.getIdEstudiante()))
                 .map(asistenciaMapper::toResponse)
                 .toList();
     }

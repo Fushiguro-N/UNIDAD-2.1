@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AvanceContenidoResponse {
     private Long id;
-    private ContenidoResponse contenido;
+    private RecursoComplementarioResponse recurso;
     private String idEstudiante;
     private Boolean consumido;
     private LocalDateTime fechaActualizacion;

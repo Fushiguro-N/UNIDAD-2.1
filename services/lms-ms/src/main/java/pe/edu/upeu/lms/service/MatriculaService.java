@@ -5,7 +5,7 @@ import pe.edu.upeu.lms.dto.MatriculaResponse;
 import java.util.List;
 
 public interface MatriculaService {
-    MatriculaResponse crear(MatriculaRequest request, String idEstudiante);
+    MatriculaResponse crear(MatriculaRequest request, String idEstudiante, String nombresEstudiante, String apellidosEstudiante);
     void marcarConfirmada(Long matriculaId);
     MatriculaResponse findById(Long id);
     List<MatriculaResponse> listar();

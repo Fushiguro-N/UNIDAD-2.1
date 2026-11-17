@@ -10,4 +10,8 @@ public interface TareaRepository extends JpaRepository<Tarea, Long> {
 
     @Query("SELECT t FROM Tarea t JOIN FETCH t.curso")
     List<Tarea> findAllConCurso();
+
+    @Query("SELECT DISTINCT t FROM Tarea t JOIN FETCH t.curso c WHERE c.id IN " +
+            "(SELECT s.curso.id FROM SeccionCurso s WHERE s.docente.id = :docenteId)")
+    List<Tarea> findAllConCursoPorDocente(Long docenteId);
 }
